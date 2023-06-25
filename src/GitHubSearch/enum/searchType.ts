@@ -8,7 +8,7 @@ export const SEARCH_TYPE_PROPERTIES = {
     searchValue: '+type:org'
   },
   [SEARCH_TYPE.USER] : {
-    searchValue: ''
+    searchValue: '+type:user'
   },
 }
 

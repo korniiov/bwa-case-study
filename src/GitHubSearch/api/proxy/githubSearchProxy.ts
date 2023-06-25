@@ -1,9 +1,15 @@
 import ISearchData from '../interfaces/ISearchData';
+import addSearchTypeToSearchText from '../../helpers/addSearchTypeToSearchText';
+import axios from 'axios';
 
-export const githubSearchProxy = ({ text }: ISearchData) =>
-  fetch(`https://api.github.com/search/users?q=${text}`, {
+export const githubSearchProxy = ({ text, type, page = 1 }: ISearchData) =>
+{
+  const preparedText = addSearchTypeToSearchText(text, type);
+
+  return axios(`https://api.github.com/search/users?q=${preparedText}&page=${page}`, {
     headers: {
       Accept: 'application/vnd.github+json',
     }
   })
-    .then(data => data.json())
+    .then(response => response.data)
+}

@@ -1,59 +1,71 @@
 import { useFormik } from 'formik';
+
+import TextField from '@mui/material/TextField';
+import Radio from '@mui/material/Radio';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Button from '@mui/material/Button';
+
 import ISearchData from '../../api/interfaces/ISearchData';
 import SEARCH_TYPE from '../../enum/searchType';
-import addSearchTypeToSearchText from '../../helpers/addSearchTypeToSearchText';
+
+import InlineFormControl from '../../../core/ui/form/InlineFormControl';
+import InlineRadioGroup from '../../../core/ui/form/InlineRadioGroup';
+import InlineFormLabel from '../../../core/ui/form/InlineFormLabel';
+import VerticalForm from '../../../core/ui/form/VerticalForm';
+
 import searchSchema from './searchSchema';
 
 interface ISearchProps {
   onSubmit: (data: ISearchData) => void,
-  isLoading?: boolean
+  isLoading?: boolean,
+  initialValues: Omit<ISearchData, 'page'>,
 }
 
-const Search = ({ onSubmit, isLoading }: ISearchProps) => {
+const Search = ({ onSubmit, isLoading, initialValues }: ISearchProps) => {
   const formik = useFormik({
     validateOnChange: false,
     validateOnBlur: false,
-    initialValues: {
-      text: '',
-      type: SEARCH_TYPE.USER
-    },
+    initialValues,
     validationSchema: searchSchema,
     onSubmit: values => {
-      const preparedText = addSearchTypeToSearchText(values.text, values.type);
-      onSubmit({ text: preparedText });
+      onSubmit({ ...values, page: 1 });
     },
   });
 
   return (
-    <form onSubmit={formik.handleSubmit}>
-      <div>
-        <div>
-          <input type="radio" id="user" name="type" value={SEARCH_TYPE.USER} onChange={formik.handleChange} checked={formik.values.type === SEARCH_TYPE.USER} />
-          <label htmlFor="user">User</label>
-        </div>
-
-        <div>
-          <input type="radio" id="corporation" name="type" value={SEARCH_TYPE.ORGANIZATION} onChange={formik.handleChange} checked={formik.values.type === SEARCH_TYPE.ORGANIZATION} />
-          <label htmlFor="corporation">Corporation</label>
-        </div>
-      </div>
-      <div>
-        <input
-          required
-          id="text"
+    <VerticalForm onSubmit={formik.handleSubmit}>
+      <InlineFormControl>
+        <InlineFormLabel id="type">Search by:</InlineFormLabel>
+        <InlineRadioGroup
+          aria-labelledby="search-type"
+          name="type"
+          value={formik.values.type}
+          onChange={formik.handleChange}
+        >
+          <FormControlLabel value={SEARCH_TYPE.USER} control={<Radio />} label="User" />
+          <FormControlLabel value={SEARCH_TYPE.ORGANIZATION} control={<Radio />} label="Corporation" />
+        </InlineRadioGroup>
+      </InlineFormControl>
+      <InlineFormControl withBtn>
+        <TextField
+          fullWidth
+          variant="standard"
+          size="small"
+          disabled={isLoading}
           name="text"
+          label="Search"
+          id="text"
           type="text"
           value={formik.values.text}
           onChange={formik.handleChange}
+          error={formik.touched.text && Boolean(formik.errors.text)}
+          helperText={formik.touched.text && formik.errors.text}
         />
-        {
-          (formik.touched.text && Boolean(formik.errors.text)) && (
-            <span>{formik.errors.text}</span>
-          )
-        }
-      </div>
-      <button type="submit" disabled={isLoading}>submit</button>
-    </form>
+        <Button size="large" disabled={isLoading} variant="contained" type="submit">
+          Submit
+        </Button>
+      </InlineFormControl>
+    </VerticalForm>
   )
 }
 
