@@ -56,6 +56,9 @@ const Search = ({ onSubmit, isLoading, initialValues, validateOnMount = false }:
       </FormControl>
       <InlineFormControl withBtn>
         <TextField
+          inputProps={{
+            "data-testid": "search-text",
+          }}
           fullWidth
           variant="standard"
           size="small"
@@ -69,7 +72,7 @@ const Search = ({ onSubmit, isLoading, initialValues, validateOnMount = false }:
           error={Boolean(formik.errors.text)}
           helperText={formik.errors.text}
         />
-        <Button size="large" disabled={isLoading} variant="contained" type="submit">
+        <Button size="large" disabled={isLoading} variant="contained" type="submit" data-testid="submit-btn">
           Submit
         </Button>
       </InlineFormControl>
