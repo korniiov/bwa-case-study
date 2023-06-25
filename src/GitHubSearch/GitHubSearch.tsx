@@ -1,4 +1,4 @@
-import {useEffect} from 'react';
+import {ChangeEvent, useEffect} from 'react';
 import {createSearchParams, useNavigate} from 'react-router-dom';
 import { githubSearchProxy } from './api/proxy/githubSearchProxy';
 import Pagination from '@mui/material/Pagination';
@@ -52,6 +52,10 @@ const GitHubSearch = () => {
     controller.request(data);
   }
 
+  const onSetPage = (e: ChangeEvent<unknown>, _page: number) => {
+    controller.onSetPage(_page);
+  }
+
   return (
     <GitHubSearchContainerUI maxWidth="sm">
       <Search
@@ -73,7 +77,7 @@ const GitHubSearch = () => {
             <UserList users={controller.data?.items} isLoading={controller.isFetching}/>
             {
               Boolean(controller.totalPages) && (
-                <Pagination count={controller.totalPages} color="primary" page={controller.page} onChange={controller.onSetPage} />
+                <Pagination count={controller.totalPages} color="primary" page={controller.page} onChange={onSetPage} />
               )
             }
           </>

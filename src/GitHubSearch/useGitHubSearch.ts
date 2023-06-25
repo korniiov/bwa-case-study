@@ -1,6 +1,6 @@
 import ISearchData from '../core/api/interfaces/ISearchData';
 import IUserSearchResponse from './api/interfaces/IUserSearchResponse';
-import {ChangeEvent, useState} from 'react';
+import {useState} from 'react';
 import IErrorResponse from './api/interfaces/IErrorResponse';
 import calculateTotalPages from './helpers/calculateTotalPages';
 
@@ -25,19 +25,20 @@ const useGitHubSearch = ({ proxy, initSearchParams }: IUseGitHubSearch) => {
     setStatus(true);
     setSearchObject(searchData);
 
-    proxy(searchData)
-      .then(data => {
-        setResponse(data);
-      })
-      .catch(error => {
-        setError(error.response.data);
-      })
-      .finally(() => {
-        setStatus(false);
+    try {
+      const data = await proxy(searchData);
+      setResponse(data);
+    } catch (error) {
+      // @ts-ignore
+      setError(error?.response?.data ?? {
+        message: 'something went wrong'
       });
+    } finally {
+      setStatus(false);
+    }
   }
 
-  const onSetPage = (e: ChangeEvent<unknown>, _page: number) => {
+  const onSetPage = (_page: number) => {
     request({ ...searchObject, page: _page });
   }
 
