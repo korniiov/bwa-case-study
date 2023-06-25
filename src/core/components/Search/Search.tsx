@@ -2,7 +2,9 @@ import { useFormik } from 'formik';
 
 import TextField from '@mui/material/TextField';
 import Radio from '@mui/material/Radio';
+import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import FormHelperText from '@mui/material/FormHelperText';
 import Button from '@mui/material/Button';
 
 import ISearchData from '../../api/interfaces/ISearchData';
@@ -37,18 +39,21 @@ const Search = ({ onSubmit, isLoading, initialValues, validateOnMount = false }:
 
   return (
     <VerticalForm onSubmit={formik.handleSubmit}>
-      <InlineFormControl>
-        <InlineFormLabel id="type">Search by:</InlineFormLabel>
-        <InlineRadioGroup
-          aria-labelledby="search-type"
-          name="type"
-          value={formik.values.type}
-          onChange={formik.handleChange}
-        >
-          <FormControlLabel value={SEARCH_TYPE.USER} control={<Radio />} label="User" />
-          <FormControlLabel value={SEARCH_TYPE.ORGANIZATION} control={<Radio />} label="Corporation" />
-        </InlineRadioGroup>
-      </InlineFormControl>
+      <FormControl>
+        <InlineFormControl>
+          <InlineFormLabel id="type">Search by:</InlineFormLabel>
+          <InlineRadioGroup
+              aria-labelledby="search-type"
+              name="type"
+              value={formik.values.type}
+              onChange={formik.handleChange}
+          >
+            <FormControlLabel value={SEARCH_TYPE.USER} control={<Radio />} label="User" />
+            <FormControlLabel value={SEARCH_TYPE.ORGANIZATION} control={<Radio />} label="Corporation" />
+          </InlineRadioGroup>
+        </InlineFormControl>
+        <FormHelperText sx={{ mt: -1, ml: 0, mb: 1, color: 'red' }}>{formik.errors.type}</FormHelperText>
+      </FormControl>
       <InlineFormControl withBtn>
         <TextField
           fullWidth
