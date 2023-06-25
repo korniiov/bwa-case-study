@@ -1,4 +1,4 @@
-import SEARCH_TYPE, {SEARCH_TYPE_PROPERTIES} from '../enum/searchType';
+import SEARCH_TYPE, {SEARCH_TYPE_PROPERTIES} from '../../core/enum/searchType';
 
 const addSearchTypeToSearchText = (text: string, type: SEARCH_TYPE) => {
   return `${text}${SEARCH_TYPE_PROPERTIES[type].searchValue}`

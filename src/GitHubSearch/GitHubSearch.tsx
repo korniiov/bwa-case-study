@@ -1,3 +1,5 @@
+import {useEffect} from 'react';
+import {useNavigate} from 'react-router';
 import { githubSearchProxy } from './api/proxy/githubSearchProxy';
 import Container from '@mui/material/Container';
 import Pagination from '@mui/material/Pagination';
@@ -5,12 +7,16 @@ import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Box from '@mui/material/Box';
 
-import Search from './components/Search';
+import Search from '../core/components/Search';
 import UserList from './components/UserList';
 
 import useGitHubSearch from './useGitHubSearch';
 
 import { styled } from '@mui/material/styles';
+import {useParams} from 'react-router-dom';
+import SEARCH_TYPE from '../core/enum/searchType';
+import searchSchema from '../core/components/Search/searchSchema';
+import ISearchData from '../core/api/interfaces/ISearchData';
 
 const GridContainer = styled(Container)`
   display: grid;
@@ -20,17 +26,47 @@ const GridContainer = styled(Container)`
 `;
 
 const GitHubSearch = () => {
-  const controller = useGitHubSearch({ proxy: githubSearchProxy });
+  const param = useParams();
+  const navigate = useNavigate();
+  const initSearchParams = {
+    text: param.searchText ?? '',
+    type: SEARCH_TYPE.USER,
+  };
+
+  const controller = useGitHubSearch({ proxy: githubSearchProxy, initSearchParams });
+
+  useEffect(() => {
+    const validate = async () => {
+      return await searchSchema.validate(initSearchParams);
+    }
+
+    validate().then(d => {
+      controller.request({...controller.searchObject, page: 1 });
+    }).catch(e => {
+      console.log(e);
+    });
+    // eslint-disable-next-line
+  }, []);
+
+  const onSubmit = (data: ISearchData) => {
+    navigate(`/search/${data.text}`);
+    controller.request(data);
+  }
 
   return (
     <GridContainer maxWidth="sm">
-      <Search onSubmit={controller.request} isLoading={controller.isFetching} initialValues={controller.searchObject} />
+      <Search
+        validateOnMount
+        onSubmit={onSubmit}
+        isLoading={controller.isFetching}
+        initialValues={controller.searchObject}
+      />
       {
         controller.error ? (
           <Box>
             <Alert severity="error">
               <AlertTitle>Error</AlertTitle>
-              {controller.error.message ?? 'something whent wrong'}
+              {controller.error.message ?? 'something went wrong'}
             </Alert>
           </Box>
         ) : (

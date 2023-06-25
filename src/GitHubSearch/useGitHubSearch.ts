@@ -1,25 +1,22 @@
-import ISearchData from './api/interfaces/ISearchData';
+import ISearchData from '../core/api/interfaces/ISearchData';
 import IUserSearchResponse from './api/interfaces/IUserSearchResponse';
 import {ChangeEvent, useState} from 'react';
-import SEARCH_TYPE from './enum/searchType';
 import IErrorResponse from './api/interfaces/IErrorResponse';
 import calculateTotalPages from './helpers/calculateTotalPages';
 
 interface IUseGitHubSearch {
-  proxy: (data: ISearchData) => Promise<IUserSearchResponse>
+  proxy: (data: ISearchData) => Promise<IUserSearchResponse>,
+  initSearchParams: Omit<ISearchData, 'page'>,
 }
 
 const PER_PAGE = 30;
 
-const useGitHubSearch = ({ proxy }: IUseGitHubSearch) => {
+const useGitHubSearch = ({ proxy, initSearchParams }: IUseGitHubSearch) => {
   const [response, setResponse] = useState<IUserSearchResponse>();
   const [error, setError] = useState<IErrorResponse | null>(null);
   const [page, setPage] = useState(1);
   const [isFetching, setStatus] = useState(false);
-  const [searchObject, setSearchObject] = useState<Omit<ISearchData, 'page'>>({
-    text: '',
-    type: SEARCH_TYPE.USER,
-  });
+  const [searchObject, setSearchObject] = useState(initSearchParams);
 
 
   const request = async (searchData: ISearchData) => {

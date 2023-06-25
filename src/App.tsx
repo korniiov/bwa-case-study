@@ -1,8 +1,15 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import GitHubSearch from './GitHubSearch';
-import React from 'react';
+import SearchOnlyPage from './SearchOnlyPage';
 
 const App = () => (
-  <GitHubSearch />
+  <BrowserRouter>
+    <Routes>
+      <Route path="/search" element={<SearchOnlyPage />} />
+      <Route path="/search/:searchText" element={<GitHubSearch />} />
+      <Route path="*" element={<Navigate to="/search" />} />
+    </Routes>
+  </BrowserRouter>
 );
 
 export default App;

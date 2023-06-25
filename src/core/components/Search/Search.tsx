@@ -17,12 +17,15 @@ import searchSchema from './searchSchema';
 
 interface ISearchProps {
   onSubmit: (data: ISearchData) => void,
+  validateOnMount?: boolean,
   isLoading?: boolean,
   initialValues: Omit<ISearchData, 'page'>,
 }
 
-const Search = ({ onSubmit, isLoading, initialValues }: ISearchProps) => {
+const Search = ({ onSubmit, isLoading, initialValues, validateOnMount = false }: ISearchProps) => {
   const formik = useFormik({
+    enableReinitialize: true,
+    validateOnMount,
     validateOnChange: false,
     validateOnBlur: false,
     initialValues,
@@ -58,8 +61,8 @@ const Search = ({ onSubmit, isLoading, initialValues }: ISearchProps) => {
           type="text"
           value={formik.values.text}
           onChange={formik.handleChange}
-          error={formik.touched.text && Boolean(formik.errors.text)}
-          helperText={formik.touched.text && formik.errors.text}
+          error={Boolean(formik.errors.text)}
+          helperText={formik.errors.text}
         />
         <Button size="large" disabled={isLoading} variant="contained" type="submit">
           Submit

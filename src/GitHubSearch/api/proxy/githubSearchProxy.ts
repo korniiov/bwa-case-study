@@ -1,4 +1,4 @@
-import ISearchData from '../interfaces/ISearchData';
+import ISearchData from '../../../core/api/interfaces/ISearchData';
 import addSearchTypeToSearchText from '../../helpers/addSearchTypeToSearchText';
 import axios from 'axios';
 
